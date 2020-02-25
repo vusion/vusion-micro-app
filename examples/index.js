@@ -31,3 +31,8 @@ proxyWindow.atob = function () {
     // rewrite
 };
 console.log(window.atob);
+
+window.xx = {
+    test: 1,
+};
+console.log(window.$root.xx, window.xx);

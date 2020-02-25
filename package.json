@@ -42,5 +42,8 @@
       "npm run lib",
       "git add"
     ]
+  },
+  "dependencies": {
+    "vusion-micro-data": "0.0.2"
   }
 }

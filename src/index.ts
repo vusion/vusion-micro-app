@@ -1,4 +1,4 @@
-
+import { subscribe } from 'vusion-micro-data';
 import isMicro from './isMicro';
 import proxyWindow  from './proxyWindow';
 import createElementHijack from './proxy/createElement';
@@ -6,16 +6,13 @@ import consoleHijack from './proxy/console';
 import timerHijack from './proxy/timer';
 import listenerHijack from './proxy/listener';
 let _window = window;
+let userWindow = {};
 if (isMicro) {
     consoleHijack(proxyWindow);
     createElementHijack(proxyWindow);
     const listenerFree = listenerHijack(proxyWindow);
     const timerFree = timerHijack(proxyWindow);
     proxyWindow.microName = '';
-    proxyWindow.microFree = function (): void {
-        listenerFree();
-        timerFree();
-    };
     _window = new Proxy(Object.create(null), {
         get(target, property): any {
             if (property === '$root') {
@@ -23,6 +20,9 @@ if (isMicro) {
             }
             if (property in proxyWindow) {
                 return proxyWindow[property as string];
+            }
+            if (property in userWindow) {
+                return userWindow[property];
             }
             return window[property];
         },
@@ -36,12 +36,24 @@ if (isMicro) {
                     console.warn(`set window.${property.toString()} maybe conflict, please use addEventListener`);
                 }
             } else {
-                proxyWindow[property as any] = value;
+                userWindow[property as any] = value;
             }
             return true;
         }
     });
-
+    setTimeout(() => {
+        subscribe(proxyWindow.microName, ({type}) => {
+            if (type === 'unmounted') {
+                userWindow = {};
+                listenerFree();
+                timerFree();
+                const elements = Array.from(document.querySelectorAll(`[micro-app=${proxyWindow.microName}]`));
+                elements.forEach((element) => {
+                    element.parentNode.removeChild(element);
+                });
+            }
+        }, true);
+    }, 0);
 }
 export const _document  = _window.document;
 export const _console  = _window.console;
