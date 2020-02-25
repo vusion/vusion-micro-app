@@ -41,7 +41,7 @@ if (isMicro) {
             return true;
         }
     });
-    setTimeout(() => {
+    setTimeout(() => { // wait for set proxyWindow.microName
         subscribe(proxyWindow.microName, ({type}) => {
             if (type === 'unmounted') {
                 userWindow = {};
@@ -52,7 +52,7 @@ if (isMicro) {
                     element.parentNode.removeChild(element);
                 });
             }
-        }, true);
+        });
     }, 0);
 }
 export const _document  = _window.document;
