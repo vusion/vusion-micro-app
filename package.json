@@ -44,6 +44,6 @@
     ]
   },
   "dependencies": {
-    "vusion-micro-data": "0.0.2"
+    "vusion-micro-data": "^0.0.3"
   }
 }

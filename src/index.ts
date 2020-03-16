@@ -1,6 +1,6 @@
 import { subscribe } from 'vusion-micro-data';
 import isMicro from './isMicro';
-import proxyWindow  from './proxyWindow';
+import proxyWindow from './proxyWindow';
 import createElementHijack from './proxy/createElement';
 import consoleHijack from './proxy/console';
 import timerHijack from './proxy/timer';
@@ -42,23 +42,21 @@ if (isMicro) {
         }
     });
     setTimeout(() => { // wait for set proxyWindow.microName
-        subscribe(proxyWindow.microName, ({type}) => {
-            if (type === 'unmounted') {
-                userWindow = {};
-                listenerFree();
-                timerFree();
-                const elements = Array.from(document.querySelectorAll(`[micro-app=${proxyWindow.microName}]`));
-                elements.forEach((element) => {
-                    element.parentNode.removeChild(element);
-                });
-            }
+        subscribe('app:' + proxyWindow.microName + ':unmounted', () => {
+            userWindow = {};
+            listenerFree();
+            timerFree();
+            const elements = Array.from(document.querySelectorAll(`[micro-app=${proxyWindow.microName}]`));
+            elements.forEach((element) => {
+                element.parentNode.removeChild(element);
+            });
         });
     }, 0);
 }
-export const _document  = _window.document;
-export const _console  = _window.console;
-export const _setTimeout  = _window.setTimeout;
-export const _setInterval  = _window.setInterval;
+export const _document = _window.document;
+export const _console = _window.console;
+export const _setTimeout = _window.setTimeout;
+export const _setInterval = _window.setInterval;
 export {
     _window,
 };
