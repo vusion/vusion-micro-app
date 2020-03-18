@@ -2,14 +2,15 @@
   "name": "vusion-micro-app",
   "version": "0.0.4",
   "description": "",
-  "main": "dist/client.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "watch": "npm t -- --watch",
     "coverage": "jest --coverage",
     "lint": "eslint src --fix --ext .ts",
-    "build": "npx webpack --mode=production",
-    "dev": "npx webpack-dev-server --mode=development"
+    "build": "tsc",
+    "dev": "tsc -w",
+    "demo": "npx webpack-dev-server --mode=development"
   },
   "keywords": [],
   "author": "zhangsanshi5566@gmail.com",

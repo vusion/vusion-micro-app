@@ -1,5 +1,4 @@
-import proxyWindow, { _window as window, _console as console, _setTimeout as setTimeout, _setInterval as setInterval, _document as document } from '../src/index.ts';
-
+import proxyWindow, { _window as window, _console as console, _setTimeout as setTimeout, _setInterval as setInterval, _document as document } from '../dist';
 window.microName = 'test';
 console.log(1111);
 console.error(3333);
