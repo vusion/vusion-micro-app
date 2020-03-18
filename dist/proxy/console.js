@@ -9,7 +9,30 @@ export default function hijack(proxyWindow) {
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];
                     }
-                    log.call(console, "%c micro app [" + proxyWindow.microName + "] log", 'color:#0f0;');
+                    var defaultLog = function () { return log.call(console, "%c microApp[" + proxyWindow.microName + ":log]", 'color:#0f0;'); };
+                    if (process.env.NODE_ENV === 'development') {
+                        try {
+                            throw new Error();
+                        }
+                        catch (error) {
+                            if (error.stack) {
+                                var errorMsg = error.stack.split('\n')[2];
+                                if (errorMsg) {
+                                    var errorTarget = errorMsg.match(/\((.*?)\)$/);
+                                    if (errorTarget) {
+                                        errorMsg = errorTarget[1];
+                                    }
+                                    log.call(console, "%c microApp[" + proxyWindow.microName + (":log] " + errorMsg.trim()), 'color:#0f0;');
+                                }
+                                else {
+                                    defaultLog();
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        defaultLog();
+                    }
                     rawConsole[property].apply(rawConsole, args);
                 };
             }
