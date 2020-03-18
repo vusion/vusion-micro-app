@@ -22,6 +22,15 @@ export default function hijack(proxyWindow) {
                     return ele;
                 };
             }
+            if (typeof document[property] === 'function') {
+                return function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i] = arguments[_i];
+                    }
+                    return document[property].apply(document, args);
+                };
+            }
             return document[property];
         },
     });

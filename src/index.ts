@@ -24,6 +24,11 @@ if (isMicro) {
             if (property in userWindow) {
                 return userWindow[property];
             }
+            if (typeof window[property] === 'function') {
+                return function(...args): any {
+                    return window[property](...args);
+                };
+            }
             return window[property];
         },
         set(target, property, value): boolean {

@@ -12,6 +12,11 @@ export default function hijack(proxyWindow): void {
                     return ele;
                 }
             }
+            if (typeof document[property] === 'function') {
+                return function(...args): any {
+                    return document[property](...args);
+                };
+            }
             return document[property];
         },
     });

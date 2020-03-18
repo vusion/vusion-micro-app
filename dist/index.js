@@ -24,6 +24,15 @@ if (isMicro) {
             if (property in userWindow) {
                 return userWindow[property];
             }
+            if (typeof window[property] === 'function') {
+                return function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i] = arguments[_i];
+                    }
+                    return window[property].apply(window, args);
+                };
+            }
             return window[property];
         },
         set: function (target, property, value) {
