@@ -7,6 +7,7 @@ import timerHijack from './proxy/timer';
 import listenerHijack from './proxy/listener';
 let _window = window;
 let userWindow = {};
+const keys = Object.keys(window);
 if (isMicro) {
     consoleHijack(proxyWindow);
     createElementHijack(proxyWindow);
@@ -24,7 +25,7 @@ if (isMicro) {
             if (property in userWindow) {
                 return userWindow[property];
             }
-            if (typeof window[property] === 'function') {
+            if (keys.includes(property as string) && typeof window[property] === 'function') {
                 return function(...args): any {
                     return window[property](...args);
                 };
@@ -34,12 +35,13 @@ if (isMicro) {
         set(target, property, value): boolean {
             if (property === 'microName') {
                 proxyWindow.microName = value;
-            }
-            if (typeof property === 'string' && property.startsWith('on')) {
+            } else if (typeof property === 'string' && property.startsWith('on')) {
                 window[property] = value;
                 if (process.env.NODE_ENV === 'development') {
                     console.warn(`set window.${property.toString()} maybe conflict, please use addEventListener`);
                 }
+            } else if (window[property] === value) {
+                return true;
             } else {
                 userWindow[property as any] = value;
             }
