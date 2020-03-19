@@ -8,9 +8,10 @@
     "watch": "npm t -- --watch",
     "coverage": "jest --coverage",
     "lint": "eslint src --fix --ext .ts",
-    "build": "tsc",
+    "build": "tsc && npx webpack --mode=production",
     "dev": "tsc -w",
-    "demo": "npx webpack-dev-server --mode=development"
+    "demo": "npx webpack-dev-server --mode=development",
+    "prepublishOnly": "npm run build && git add ."
   },
   "keywords": [],
   "author": "zhangsanshi5566@gmail.com",

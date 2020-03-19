@@ -17,7 +17,9 @@ module.exports = function (env, argv) {
             extensions: [ '.ts', '.js' ],
         },
         output: {
-            filename: 'client.js',
+            library: 'microApp',
+            libraryTarget: 'umd',
+            filename: 'es5.js',
             path: path.resolve(__dirname, 'dist'),
         },
         plugins: isDev ? [new HtmlWebpackPlugin({

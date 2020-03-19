@@ -1,0 +1,13 @@
+<script>
+    window.__MICROAPP__ = true;
+</script>
+<script src="../dist/es5.js"></script>
+<script>
+console.log(microApp);
+{
+    const window = microApp._window;
+    const console = microApp._console;
+    window.microName = 'test';
+    console.log('222');
+}
+</script>
