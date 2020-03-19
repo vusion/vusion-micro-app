@@ -53,7 +53,7 @@ if (isMicro) {
             userWindow = {};
             listenerFree();
             timerFree();
-            const elements = Array.from(document.querySelectorAll(`[micro-app=${proxyWindow.microName}]`));
+            const elements = Array.from(document.querySelectorAll(`[micro-app="${proxyWindow.microName}"]`));
             elements.forEach((element) => {
                 element.parentNode.removeChild(element);
             });
