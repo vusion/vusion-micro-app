@@ -1,11 +1,16 @@
 interface ProxyWindow extends Window {
     [props: string]: any;
 }
+declare global {
+    interface Window {
+        microName: string;
+    }
+}
 const proxyWindow: ProxyWindow = Object.create(null);
 const microApp = {
     active: false,
     quiet: false,
-    microName: '',
+    microName: window.microName,
     message: '',
 };
 Object.assign(proxyWindow, {
