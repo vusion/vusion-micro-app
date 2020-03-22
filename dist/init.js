@@ -38,7 +38,7 @@ export default function () {
             return window[property];
         },
         set: function (target, property, value) {
-            if (['$root', '$microApp'].includes(property)) {
+            if (['$root', 'microApp'].includes(property)) {
                 return false;
             }
             if (typeof property === 'string' && property.startsWith('on')) {

@@ -35,7 +35,7 @@ export default function (): typeof window {
             return window[property];
         },
         set(target, property, value): boolean {
-            if (['$root', '$microApp'].includes(property as string)) {
+            if (['$root', 'microApp'].includes(property as string)) {
                 return false;
             }
             if (typeof property === 'string' && property.startsWith('on')) {
