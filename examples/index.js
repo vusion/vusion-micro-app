@@ -1,5 +1,6 @@
-import proxyWindow, { _window as window, _console as console, _setTimeout as setTimeout, _setInterval as setInterval, _document as document } from '../dist';
+import proxyWindow, { _window as window, _console as console, _setTimeout as setTimeout, _setInterval as setInterval, } from '../dist';
 window.microName = 'test';
+window.$microApp.active = true;
 console.log(1111);
 console.error(3333);
 

@@ -5,27 +5,18 @@ import timerHijack from './proxy/timer';
 import listenerHijack from './proxy/listener';
 import proxyWindow from './proxyWindow';
 
-let userWindow = {};
+const userWindow = {};
 const keys = Object.keys(window);
 export default function (): typeof window {
     consoleHijack(proxyWindow);
     createElementHijack(proxyWindow);
     const listenerFree = listenerHijack(proxyWindow);
     const timerFree = timerHijack(proxyWindow);
-    proxyWindow.microName = '';
-    const micro = {
-        message: Data,
-        active: false,
-    };
-    const saveMap = {
-        $root: window,
-        $micro: micro,
-    };
-    const saveKeys = Object.keys(saveMap);
+    proxyWindow.$microApp.message = Data;
     const _window = new Proxy(Object.create(null), {
         get(target, property): any {
-            if (saveKeys.includes(property as string)) {
-                return saveMap[property];
+            if (['top', 'window', 'self'].includes(property as string)) {
+                return _window;
             }
             if (property in proxyWindow) {
                 return proxyWindow[property as string];
@@ -34,14 +25,17 @@ export default function (): typeof window {
                 return userWindow[property];
             }
             if (keys.includes(property as string) && typeof window[property] === 'function') {
-                return function(...args): any {
+                const value = window[property];
+                const proxyValue = function(...args): any {
                     return window[property](...args);
                 };
+                Object.keys(value).forEach(key => (proxyValue[key] = value[key]));
+                return proxyValue;
             }
             return window[property];
         },
         set(target, property, value): boolean {
-            if (saveKeys.includes(property as string)) {
+            if (['$root', '$microApp'].includes(property as string)) {
                 return false;
             }
             if (property === 'microName') {
@@ -59,21 +53,17 @@ export default function (): typeof window {
             return true;
         }
     });
-    setTimeout(() => { // wait for set proxyWindow.microName
-        const topic = 'app:' + proxyWindow.microName;
-        Data.subscribe(topic + ':mounted', () => {
-            micro.active = true;
-        });
-        Data.subscribe(topic + ':unmounted', () => {
-            userWindow = {};
-            listenerFree();
-            timerFree();
-            const elements = Array.from(document.querySelectorAll(`[micro-app="${proxyWindow.microName}"]`));
-            elements.forEach((element) => {
-                element.parentNode.removeChild(element);
-            });
-            micro.active = false;
-        });
-    }, 0);
+    const topic = 'app:' + proxyWindow.microName;
+    const microApp = proxyWindow.microApp;
+    Data.subscribe(topic + ':mount', () => {
+        microApp.active = true;
+    });
+    Data.subscribe(topic + ':unmount', () => {
+        microApp.active = false;
+    });
+    Data.subscribe(topic + ':unmounted', () => {
+        listenerFree();
+        timerFree();
+    });
     return _window;
 }
