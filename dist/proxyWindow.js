@@ -2,11 +2,11 @@ var proxyWindow = Object.create(null);
 var microApp = {
     active: false,
     quiet: false,
+    microName: '',
+    message: '',
 };
 Object.assign(proxyWindow, {
-    $microApp: microApp,
+    microApp: microApp,
     $root: window,
-    $microName: '',
-    $message: '',
 });
 export default proxyWindow;

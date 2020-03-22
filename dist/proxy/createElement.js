@@ -14,8 +14,8 @@ export default function hijack(proxyWindow) {
             args[_i] = arguments[_i];
         }
         var ele = rawCreateElement.call.apply(rawCreateElement, __spreadArrays([document], args));
-        if (proxyWindow.$microApp.active) {
-            ele.setAttribute('micro-app', proxyWindow.microName);
+        if (proxyWindow.microApp.active) {
+            ele.setAttribute('micro-app', proxyWindow.microApp.microName);
         }
         return ele;
     };

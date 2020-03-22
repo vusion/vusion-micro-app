@@ -27,9 +27,10 @@ window.atob(); // log 'test'
 ## note
 
 + 当 `window.__MICROAPP__` 为 `false` 的时候，相关功能关闭
-+ 必须在初始化阶段设置 `window.microName` 属性。否则部分特性出错
++ 必须在初始化阶段设置 `window.microApp.microName` 属性。否则部分特性出错
 + 必须使用形如 `window.attr` 去使用全局方法属性
 + 原始的 `window` 对象可以通过 `window.$root` 的方式获取
-+ 可以通过 `window.$microApp` 获取当前应用的状态
-+ 可以通过 `window.$message`（`vusion-micro-data`） 进行通信
-+ 在 `window` 对象上设置 `on` 开头的属性值，会被设置到原始的 `window` 对象上，因为形如 `onerror` 等属性，一般此类是事件监听。另外推荐用 `addEventListener`， 因为 `onerror` 很容易冲突
++ 可以通过 `window.microApp.active` 获取当前应用的状态
++ 可以通过 `window.microApp.quiet` 关闭详细日志
++ 可以通过 `window.microApp.message`（`vusion-micro-data`） 进行通信
++ 在 `window` 对象上设置 `on` 开头的属性值，会被设置到原始的 `window` 对象上，因为形如 `onerror` 等属性是事件监听。另外推荐用 `addEventListener`， 因为 `onerror` 很容易冲突

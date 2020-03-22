@@ -5,8 +5,8 @@ export default function hijack(proxyWindow): void {
         get(target, property): Function {
             if (typeof rawConsole[property] === 'function') {
                 return function (...args): void {
-                    const defaultLog = (): void => log.call(rawConsole, "%c microApp[" + proxyWindow.microName + ":log]", 'color:#0f0;');
-                    if (process.env.NODE_ENV === 'development' && proxyWindow.$microApp && !proxyWindow.$microApp.quiet) {
+                    const defaultLog = (): void => log.call(rawConsole, "%c microApp[" + proxyWindow.microApp.microName + ":log]", 'color:#0f0;');
+                    if (process.env.NODE_ENV === 'development' && proxyWindow.microApp && !proxyWindow.microApp.quiet) {
                         try {
                             throw new Error();
                         } catch (error) {
@@ -17,7 +17,7 @@ export default function hijack(proxyWindow): void {
                                     if (errorTarget) {
                                         errorMsg = errorTarget[1];
                                     }
-                                    log.call(rawConsole, "%c microApp[" + proxyWindow.microName + `:log] ${errorMsg.trim()}`, 'color:#0f0;');
+                                    log.call(rawConsole, "%c microApp[" + proxyWindow.microApp.microName + `:log] ${errorMsg.trim()}`, 'color:#0f0;');
                                 } else {
                                     defaultLog();
                                 }

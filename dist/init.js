@@ -11,7 +11,7 @@ export default function () {
     createElementHijack(proxyWindow);
     var listenerFree = listenerHijack(proxyWindow);
     var timerFree = timerHijack(proxyWindow);
-    proxyWindow.$microApp.message = Data;
+    proxyWindow.microApp.message = Data;
     var _window = new Proxy(Object.create(null), {
         get: function (target, property) {
             if (['top', 'window', 'self'].includes(property)) {
@@ -41,10 +41,7 @@ export default function () {
             if (['$root', '$microApp'].includes(property)) {
                 return false;
             }
-            if (property === 'microName') {
-                proxyWindow.microName = value;
-            }
-            else if (typeof property === 'string' && property.startsWith('on')) {
+            if (typeof property === 'string' && property.startsWith('on')) {
                 window[property] = value;
                 if (process.env.NODE_ENV === 'development') {
                     console.warn("set window." + property.toString() + " maybe conflict, please use addEventListener");
@@ -59,8 +56,8 @@ export default function () {
             return true;
         }
     });
-    var topic = 'app:' + proxyWindow.microName;
     var microApp = proxyWindow.microApp;
+    var topic = 'app:' + microApp.microName;
     Data.subscribe(topic + ':mount', function () {
         microApp.active = true;
     });
