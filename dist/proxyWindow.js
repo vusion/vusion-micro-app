@@ -4,6 +4,7 @@ var microApp = {
     quiet: false,
     microName: window.microName,
     message: '',
+    isWrapRunning: false,
 };
 Object.assign(proxyWindow, {
     microApp: microApp,

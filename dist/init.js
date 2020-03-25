@@ -1,5 +1,5 @@
 import * as Data from 'vusion-micro-data';
-import createElementHijack from './proxy/createElement';
+import createElementHijack, { reBuildCSS } from './proxy/createElement';
 import consoleHijack from './proxy/console';
 import timerHijack from './proxy/timer';
 import listenerHijack from './proxy/listener';
@@ -60,6 +60,7 @@ export default function () {
     var topic = 'app:' + microApp.microName;
     Data.subscribe(topic + ':mount', function () {
         microApp.active = true;
+        reBuildCSS.mount(proxyWindow);
     });
     Data.subscribe(topic + ':unmount', function () {
         microApp.active = false;
@@ -67,6 +68,7 @@ export default function () {
     Data.subscribe(topic + ':unmounted', function () {
         listenerFree();
         timerFree();
+        reBuildCSS.unmounted(proxyWindow);
     });
     return _window;
 }

@@ -14,9 +14,38 @@ export default function hijack(proxyWindow) {
             args[_i] = arguments[_i];
         }
         var ele = rawCreateElement.call.apply(rawCreateElement, __spreadArrays([document], args));
-        if (proxyWindow.microApp.active) {
-            ele.setAttribute('micro-app', proxyWindow.microApp.microName);
+        var microApp = proxyWindow.microApp;
+        if (microApp.isWrapRunning) {
+            ele.setAttribute('micro-app', microApp.microName);
+        }
+        else if (microApp.active) {
+            ele.setAttribute('micro-app', microApp.microName);
         }
         return ele;
     };
 }
+var cssCache = new Map();
+export var reBuildCSS = {
+    mount: function (proxyWindow) {
+        if (cssCache.size) {
+            cssCache.forEach(function (parentNode, element) {
+                parentNode.appendChild(element);
+            });
+            cssCache.clear();
+        }
+    },
+    unmounted: function (proxyWindow) {
+        var microApp = proxyWindow.microApp;
+        var elements = Array.from(document.querySelectorAll("[micro-app=\"" + microApp.microName + "\"]"));
+        elements.forEach(function (element) {
+            var tagName = element.tagName;
+            if (['LINK', 'STYLE'].includes(tagName)) {
+                cssCache.set(element, element.parentNode);
+                element.parentNode.removeChild(element);
+            }
+            else if (tagName !== 'SCRIPT') {
+                proxyWindow.console.error("element can't remove:", element);
+            }
+        });
+    },
+};
