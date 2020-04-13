@@ -1,7 +1,8 @@
+import { ProxyWindow } from '../proxyWindow';
 const document = window.document;
 const rawCreateElement = document.createElement;
 type rawCreateElementParameters = Parameters<typeof rawCreateElement>;
-export default function hijack(proxyWindow): void {
+export default function hijack(proxyWindow: ProxyWindow): void {
     document.createElement = function(...args: rawCreateElementParameters): ReturnType<(typeof rawCreateElement)> {
         const ele = rawCreateElement.call(document, ...args);
         const microApp = proxyWindow.microApp;
@@ -15,7 +16,7 @@ export default function hijack(proxyWindow): void {
 }
 const cssCache = new Map<Element, Node & ParentNode>();
 export const reBuildCSS = {
-    mount(proxyWindow): void {
+    mount(): void {
         if (cssCache.size) {
             cssCache.forEach((parentNode, element) => {
                 parentNode.appendChild(element);
@@ -23,7 +24,7 @@ export const reBuildCSS = {
             cssCache.clear();
         }
     },
-    unmounted(proxyWindow): void {
+    unmounted(proxyWindow?: ProxyWindow): void {
         const microApp = proxyWindow.microApp;
         const elements = Array.from(document.querySelectorAll(`[micro-app="${microApp.microName}"]`));
         elements.forEach((element) => {
@@ -32,7 +33,7 @@ export const reBuildCSS = {
                 cssCache.set(element, element.parentNode);
                 element.parentNode.removeChild(element);
             } else if (tagName !== 'SCRIPT') {
-                proxyWindow.console.error(`element can't remove:`, element);
+                proxyWindow.console.error(`element not remove:`, element);
             }
         });
     },

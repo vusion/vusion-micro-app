@@ -1,8 +1,9 @@
+import { ProxyWindow } from '../proxyWindow';
 const rawAddEventListener = window.addEventListener;
 const rawRemoveEventListener = window.removeEventListener;
 type rawAddEventListenerParameters = Parameters<typeof rawAddEventListener>;
 type rawRemoveEventListenerParameters = Parameters<typeof rawRemoveEventListener>;
-export default function (proxyWindow):  Function {
+export default function (proxyWindow: ProxyWindow): Function {
     const listenerList: rawAddEventListenerParameters[] = [];
   
     proxyWindow.addEventListener = (...args: rawAddEventListenerParameters): ReturnType<typeof rawAddEventListener> => {

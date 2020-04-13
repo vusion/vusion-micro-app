@@ -1,7 +1,8 @@
 var rawConsole = window.console;
 var log = rawConsole.log;
 export default function hijack(proxyWindow) {
-    proxyWindow.console = new Proxy({}, {
+    var _console = {};
+    proxyWindow.console = new Proxy(_console, {
         get: function (target, property) {
             if (typeof rawConsole[property] === 'function') {
                 return function () {
@@ -9,33 +10,29 @@ export default function hijack(proxyWindow) {
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];
                     }
-                    var defaultLog = function () { return log.call(rawConsole, "%c microApp[" + proxyWindow.microApp.microName + ":log]", 'color:#0f0;'); };
-                    if (proxyWindow.microApp && !proxyWindow.microApp.quiet) {
+                    var defaultLog = function (msg) { return log.call(rawConsole, "%c microApp[" + proxyWindow.microApp.microName + (":log] " + msg), 'color:#0f0;'); };
+                    if (!proxyWindow.microApp.quiet) {
                         try {
                             throw new Error();
                         }
                         catch (error) {
-                            if (error.stack) {
-                                var errorMsg = error.stack.split('\n')[2];
-                                if (errorMsg) {
-                                    var errorTarget = errorMsg.match(/\((.*?)\)$/);
-                                    if (errorTarget) {
-                                        errorMsg = errorTarget[1];
-                                    }
-                                    log.call(rawConsole, "%c microApp[" + proxyWindow.microApp.microName + (":log] " + errorMsg.trim()), 'color:#0f0;');
+                            var errorMsg = (error.stack || '').split('\n')[2];
+                            if (errorMsg) {
+                                var errorTarget = errorMsg.match(/\((.*?)\)$/);
+                                if (errorTarget) {
+                                    errorMsg = errorTarget[1];
                                 }
-                                else {
-                                    defaultLog();
-                                }
+                                defaultLog(errorMsg.trim());
+                            }
+                            else {
+                                defaultLog();
                             }
                         }
-                    }
-                    else {
-                        defaultLog();
                     }
                     rawConsole[property].apply(rawConsole, args);
                 };
             }
+            return rawConsole[property];
         },
     });
 }

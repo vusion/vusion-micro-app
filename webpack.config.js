@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = function (env, argv) {
     const isDev = argv.mode === 'development';
@@ -22,9 +23,14 @@ module.exports = function (env, argv) {
             filename: 'es5.js',
             path: path.resolve(__dirname, 'dist'),
         },
-        plugins: isDev ? [new HtmlWebpackPlugin({
-            template: './examples/index.html',
-        })] : undefined,
+        plugins: isDev ? [
+            new HtmlWebpackPlugin({
+                template: './examples/index.html',
+            }),
+            new webpack.DefinePlugin({
+                MICRO_NAME: JSON.stringify('demo'),
+            }),
+        ] : undefined,
         devServer: {
             contentBase: path.join(__dirname, 'dist'),
             compress: true,

@@ -8,7 +8,7 @@
     "watch": "npm t -- --watch",
     "coverage": "jest --coverage",
     "lint": "eslint src --fix --ext .ts",
-    "build": "tsc && npx webpack --mode=production",
+    "build": "tsc",
     "dev": "tsc -w",
     "demo": "npx webpack-dev-server --mode=development",
     "prepublishOnly": "npm run build && git add ."

@@ -1,13 +1,8 @@
+import microApp from './microApp';
+var win = window; // fix typescript error
 var proxyWindow = Object.create(null);
-var microApp = {
-    active: false,
-    quiet: false,
-    microName: window.microName,
-    message: '',
-    isWrapRunning: false,
-};
 Object.assign(proxyWindow, {
     microApp: microApp,
-    $root: window,
+    $realWindow: window,
 });
 export default proxyWindow;

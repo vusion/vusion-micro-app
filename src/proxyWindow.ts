@@ -1,21 +1,24 @@
-interface ProxyWindow extends Window {
-    [props: string]: any;
-}
+import microApp from './microApp';
 declare global {
     interface Window {
-        microName: string;
+        $realWindow: typeof window;
     }
 }
+const win = window as Window; // fix typescript error
+export interface ProxyWindow {
+    [props: string]: any;
+    $realWindow: typeof window;
+    microApp: typeof microApp;
+    console: typeof win.console;
+    addEventListener: typeof win.addEventListener;
+    removeEventListener: typeof win.removeEventListener;
+    setTimeout: typeof win.setTimeout;
+    setInterval: typeof win.setInterval;
+}
 const proxyWindow: ProxyWindow = Object.create(null);
-const microApp = {
-    active: false,
-    quiet: false,
-    microName: window.microName,
-    message: '',
-    isWrapRunning: false,
-};
+
 Object.assign(proxyWindow, {
     microApp,
-    $root: window,
+    $realWindow: window,
 });
 export default proxyWindow;

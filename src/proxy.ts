@@ -1,20 +1,11 @@
-import * as Data from 'vusion-micro-data';
-import createElementHijack, { reBuildCSS } from './proxy/createElement';
-import consoleHijack from './proxy/console';
-import timerHijack from './proxy/timer';
-import listenerHijack from './proxy/listener';
 import proxyWindow from './proxyWindow';
-
+import bootstrap from './bootstrap';
 const userWindow = {};
 const keys = Object.keys(window);
-export default function (): typeof window {
-    consoleHijack(proxyWindow);
-    createElementHijack(proxyWindow);
-    const listenerFree = listenerHijack(proxyWindow);
-    const timerFree = timerHijack(proxyWindow);
-    proxyWindow.microApp.message = Data;
-    const _window = new Proxy(Object.create(null), {
-        get(target, property): any {
+type Window = typeof window;
+export default function (): Window {
+    const _window = new Proxy(Object.create(null) as Window, {
+        get(target: Window, property: keyof Window): any {
             if (['top', 'window', 'self'].includes(property as string)) {
                 return _window;
             }
@@ -34,8 +25,8 @@ export default function (): typeof window {
             }
             return window[property];
         },
-        set(target, property, value): boolean {
-            if (['$root', 'microApp'].includes(property as string)) {
+        set(target: Window, property: any, value: any): boolean {
+            if (['$realWindow', 'microApp'].includes(property as string)) {
                 return false;
             }
             if (typeof property === 'string' && property.startsWith('on')) {
@@ -51,20 +42,6 @@ export default function (): typeof window {
             return true;
         }
     });
-    const microApp = proxyWindow.microApp;
-    const topic = 'app:' + microApp.microName;
-    Data.subscribe(topic + ':mount', () => {
-        microApp.active = true;
-        reBuildCSS.mount(proxyWindow);
-    });
-    Data.subscribe(topic + ':unmount', () => {
-        microApp.active = false;
-    });
-    Data.subscribe(topic + ':unmounted', () => {
-        listenerFree();
-        timerFree();
-        reBuildCSS.unmounted(proxyWindow);
-        
-    });
+    bootstrap();
     return _window;
 }

@@ -1,8 +1,10 @@
-const rawSetTimeout = window.setTimeout;
-const rawSetInterval = window.setInterval;
+import { ProxyWindow } from '../proxyWindow';
+const rawSetTimeout = (window as Window).setTimeout;
+const rawSetInterval = (window as Window).setInterval;
 type rawSetTimeoutParameters = Parameters<typeof rawSetTimeout>;
 type rawSetIntervalParameters = Parameters<typeof rawSetInterval>;
-export default function hijack(proxyWindow): Function {
+
+export default function hijack(proxyWindow: ProxyWindow): Function {
     const timeIds: number[] = [];
     proxyWindow.setTimeout = function (...args: rawSetTimeoutParameters): ReturnType<typeof rawSetTimeout> {
         const id = rawSetTimeout.call(window, ...args);

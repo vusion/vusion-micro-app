@@ -26,7 +26,7 @@ export default function hijack(proxyWindow) {
 }
 var cssCache = new Map();
 export var reBuildCSS = {
-    mount: function (proxyWindow) {
+    mount: function () {
         if (cssCache.size) {
             cssCache.forEach(function (parentNode, element) {
                 parentNode.appendChild(element);
@@ -44,7 +44,7 @@ export var reBuildCSS = {
                 element.parentNode.removeChild(element);
             }
             else if (tagName !== 'SCRIPT') {
-                proxyWindow.console.error("element can't remove:", element);
+                proxyWindow.console.error("element not remove:", element);
             }
         });
     },

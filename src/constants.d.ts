@@ -1,0 +1,1 @@
+declare const MICRO_NAME: string;
