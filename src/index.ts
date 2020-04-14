@@ -19,4 +19,10 @@ export const _setInterval = _window.setInterval;
 export {
     _window,
 };
+window[MICRO_NAME] = {
+    _window,
+    _console,
+    _setTimeout,
+    _setInterval,
+};
 export default proxyWindow;

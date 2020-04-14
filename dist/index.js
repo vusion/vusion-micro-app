@@ -25,4 +25,10 @@ export var _console = _window.console;
 export var _setTimeout = _window.setTimeout;
 export var _setInterval = _window.setInterval;
 export { _window, };
+window[MICRO_NAME] = {
+    _window: _window,
+    _console: _console,
+    _setTimeout: _setTimeout,
+    _setInterval: _setInterval,
+};
 export default proxyWindow;
