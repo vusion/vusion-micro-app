@@ -1,11 +1,13 @@
 import proxyWindow from './proxyWindow';
 import bootstrap from './bootstrap';
 const userWindow = {};
-const keys = Object.keys(window);
 type Window = typeof window;
+const keys = Object.keys(window);
+const properties = Object.keys(Object.getOwnPropertyDescriptors(window));
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 export default function (): Window {
     const _window = new Proxy(Object.create(null) as Window, {
-        get(target: Window, property: keyof Window): any {
+        get(target: Window, property: any): any {
             if (['top', 'window', 'self'].includes(property as string)) {
                 return _window;
             }
@@ -15,13 +17,19 @@ export default function (): Window {
             if (property in userWindow) {
                 return userWindow[property];
             }
+            if (property === 'hasOwnProperty') {
+                return (key: any): any => hasOwnProperty.call(userWindow, key) || hasOwnProperty.call(proxyWindow, key) || hasOwnProperty.call(window, key);
+            }
             if (keys.includes(property as string) && typeof window[property] === 'function') {
-                const value = window[property];
-                const proxyValue = function(...args): any {
-                    return window[property](...args);
-                };
-                Object.keys(value).forEach(key => (proxyValue[key] = value[key]));
-                return proxyValue;
+                const value = window[property] as any;
+                if (!value.__micro__) {
+                    const proxyFunction = function(...args): any {
+                        return window[property as string](...args);
+                    };
+                    Object.keys(value).forEach(key => (proxyFunction[key] = value[key]));
+                    Object.defineProperty(value, '__micro__', { enumerable: false, value: proxyFunction });
+                }
+                return value.__micro__;
             }
             return window[property];
         },
@@ -29,18 +37,31 @@ export default function (): Window {
             if (['$realWindow', 'microApp'].includes(property as string)) {
                 return false;
             }
-            if (typeof property === 'string' && property.startsWith('on')) {
+            if (properties.includes(property)) {
                 window[property] = value;
                 if (process.env.NODE_ENV === 'development') {
-                    console.warn(`set window.${property.toString()} maybe conflict, please use addEventListener`);
+                    console.warn(`set window["${property.toString()}"] maybe conflict`);
                 }
-            } else if (window[property] === value) {
-                return true;
             } else {
-                userWindow[property as any] = value;
+                userWindow[property] = value;
             }
             return true;
-        }
+        },
+        // window.a = 1;  // in other files visit a
+        has(target: Window, property: any): boolean {
+            return property in userWindow || property in proxyWindow || property in window;
+        },
+        // delete window.a
+        deleteProperty(target: Window, property: any): boolean {
+            if (property in userWindow) {
+                return delete userWindow[property];
+            } else {
+                return delete window[property];
+            }
+        },
+        ownKeys(): any[] {
+            return Array.from(new Set([...Reflect.ownKeys(window), ...Reflect.ownKeys(userWindow), ...Reflect.ownKeys(proxyWindow)]));
+        },
     });
     bootstrap();
     return _window;
