@@ -1,6 +1,6 @@
 {
   "name": "vusion-micro-app",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "lib": "tsc",
     "dev": "tsc -w",
     "demo": "npx webpack-dev-server --mode=development",
-    "prepublishOnly": "npm run build && git add ."
+    "prepublishOnly": "npm run lib && git add ."
   },
   "keywords": [],
   "author": "zhangsanshi5566@gmail.com",
