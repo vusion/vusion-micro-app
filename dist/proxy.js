@@ -41,7 +41,7 @@ export default function () {
             if (['$realWindow', 'microApp'].includes(property)) {
                 return false;
             }
-            if (properties.includes(property)) {
+            if (typeof property === 'string' && property.startsWith('on')) {
                 window[property] = value;
                 if (process.env.NODE_ENV === 'development') {
                     console.warn("set window[\"" + property.toString() + "\"] maybe conflict");
