@@ -23,9 +23,7 @@ export default function (): Window {
             if (keys.includes(property as string) && typeof window[property] === 'function') {
                 const value = window[property] as any;
                 if (!value.__micro__) {
-                    const proxyFunction = function(...args): any {
-                        return window[property as string](...args);
-                    };
+                    const proxyFunction = value.bind(window);
                     Object.keys(value).forEach(key => (proxyFunction[key] = value[key]));
                     Object.defineProperty(value, '__micro__', { enumerable: false, value: proxyFunction });
                 }

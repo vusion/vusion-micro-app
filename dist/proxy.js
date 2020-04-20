@@ -29,13 +29,7 @@ export default function () {
             if (keys.includes(property) && typeof window[property] === 'function') {
                 var value_1 = window[property];
                 if (!value_1.__micro__) {
-                    var proxyFunction_1 = function () {
-                        var args = [];
-                        for (var _i = 0; _i < arguments.length; _i++) {
-                            args[_i] = arguments[_i];
-                        }
-                        return window[property].apply(window, args);
-                    };
+                    var proxyFunction_1 = value_1.bind(window);
                     Object.keys(value_1).forEach(function (key) { return (proxyFunction_1[key] = value_1[key]); });
                     Object.defineProperty(value_1, '__micro__', { enumerable: false, value: proxyFunction_1 });
                 }
