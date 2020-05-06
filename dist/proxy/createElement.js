@@ -18,9 +18,6 @@ export default function hijack(proxyWindow) {
         if (microApp.isWrapRunning) {
             ele.setAttribute('micro-app', microApp.microName);
         }
-        else if (microApp.active) {
-            ele.setAttribute('micro-app', microApp.microName);
-        }
         return ele;
     };
 }

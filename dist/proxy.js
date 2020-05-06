@@ -17,6 +17,9 @@ export default function () {
             if (['top', 'window', 'self'].includes(property)) {
                 return _window;
             }
+            if (['micro'].includes(property)) {
+                return window.micro;
+            }
             if (property in proxyWindow) {
                 return proxyWindow[property];
             }
@@ -38,7 +41,7 @@ export default function () {
             return window[property];
         },
         set: function (target, property, value) {
-            if (['$realWindow', 'microApp'].includes(property)) {
+            if (['$realWindow', 'microApp', 'micro'].includes(property)) {
                 return false;
             }
             if (typeof property === 'string' && property.startsWith('on')) {

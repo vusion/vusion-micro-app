@@ -11,6 +11,9 @@ export default function (): Window {
             if (['top', 'window', 'self'].includes(property as string)) {
                 return _window;
             }
+            if (['micro'].includes(property as string)) {
+                return window.micro;
+            }
             if (property in proxyWindow) {
                 return proxyWindow[property as string];
             }
@@ -32,7 +35,7 @@ export default function (): Window {
             return window[property];
         },
         set(target: Window, property: any, value: any): boolean {
-            if (['$realWindow', 'microApp'].includes(property as string)) {
+            if (['$realWindow', 'microApp', 'micro'].includes(property as string)) {
                 return false;
             }
             if (typeof property === 'string' && property.startsWith('on')) {

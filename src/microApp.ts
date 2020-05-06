@@ -1,5 +1,6 @@
 import * as Data from 'vusion-micro-data';
 const microApp = {
+    isMicro: true,
     active: false,
     quiet: false,
     microName: MICRO_NAME,

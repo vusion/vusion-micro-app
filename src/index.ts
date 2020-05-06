@@ -7,11 +7,10 @@ if (isMicro) {
     _window = proxy();
 } else {
     _window.$realWindow = _window;
-    _window.microApp = {
-        ...microApp,
-        active: true,
-        isWrapRunning: true,
-    };
+    Object.assign(microApp, {
+        isMicro: false,
+    });
+    _window.microApp = microApp;
 }
 export const _console = _window.console;
 export const _setTimeout = _window.setTimeout;
